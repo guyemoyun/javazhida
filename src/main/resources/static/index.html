@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="智答多模型问答应用">
+  <title>智答 - 多模型问答</title>
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <main class="app-shell">
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-mark">智</span>
+        <div><strong>智答</strong><small>多模型工作台</small></div>
+      </div>
+      <button class="new-chat" id="new-chat" type="button"><span>+</span>新建对话</button>
+      <div class="history-heading"><span>对话记录</span><span id="conversation-count">0</span></div>
+      <nav class="conversation-list" id="conversation-list" aria-label="历史对话"></nav>
+      <div class="sidebar-footer"><span class="status-dot"></span><span>记录保存在当前浏览器</span></div>
+    </aside>
+
+    <section class="chat-panel" aria-label="问答">
+      <header class="topbar">
+        <button class="menu-button" id="menu-button" type="button" title="打开对话列表" aria-label="打开对话列表">☰</button>
+        <div class="title-group">
+          <p class="eyebrow">当前对话</p>
+          <h1 id="conversation-title">新建对话</h1>
+        </div>
+        <div class="model-controls">
+          <label><span>服务商</span><select id="provider" aria-label="模型服务商"></select></label>
+          <label><span>模型</span><input id="model" aria-label="模型名称" maxlength="120"></label>
+        </div>
+      </header>
+
+      <div class="conversation-tools" aria-label="消息工具">
+        <label class="message-search">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input id="message-search" type="search" maxlength="200" autocomplete="off" placeholder="搜索当前对话消息" aria-label="搜索当前对话消息">
+        </label>
+        <span class="search-result" id="search-result" aria-live="polite"></span>
+        <span class="message-stats" id="message-stats">0 条消息 · 0 字节 · 约 0 tokens</span>
+        <button class="clear-messages" id="clear-messages" type="button">清空消息</button>
+      </div>
+
+      <div class="notice" id="notice" role="status"></div>
+      <section class="messages" id="messages" aria-live="polite"></section>
+
+      <form class="composer" id="chat-form">
+        <textarea id="question" rows="3" maxlength="12000" aria-label="输入问题" placeholder="输入消息..." required></textarea>
+        <div class="composer-footer">
+          <span id="composer-status">Enter 发送，Shift + Enter 换行</span>
+          <button id="send" type="submit">发送</button>
+        </div>
+      </form>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
