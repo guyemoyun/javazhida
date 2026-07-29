@@ -6,8 +6,8 @@ POST http://localhost:8080/api/chat
 Content-Type: application/json
 
 {
-  "provider": "openai",
-  "model": "gpt-4o-mini",
+  "provider": "deepseek",
+  "model": "deepseek-chat",
   "message": "用一句话介绍你自己",
   "history": []
 }

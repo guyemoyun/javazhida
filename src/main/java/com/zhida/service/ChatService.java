@@ -35,9 +35,18 @@ public class ChatService {
     }
 
     public List<ProviderInfo> providers() {
-        return properties.getProviders().entrySet().stream()
-                .map(entry -> toInfo(entry.getKey(), entry.getValue()))
-                .toList();
+        List<ProviderInfo> providers = new ArrayList<>();
+        String defaultProvider = properties.getDefaultProvider();
+        ChatProperties.Provider configuredDefault = properties.getProviders().get(defaultProvider);
+        if (configuredDefault != null) {
+            providers.add(toInfo(defaultProvider, configuredDefault));
+        }
+        properties.getProviders().forEach((id, provider) -> {
+            if (!id.equals(defaultProvider)) {
+                providers.add(toInfo(id, provider));
+            }
+        });
+        return providers;
     }
 
     public ChatResponse chat(ChatRequest request) {

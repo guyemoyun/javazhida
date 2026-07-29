@@ -4,6 +4,9 @@ debug.log
 .env
 .env.*
 !.env.example
+config/model-config.properties
+.run/
+logs/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

@@ -1,6 +1,7 @@
 package com.zhida;
 
 import com.zhida.config.ChatProperties;
+import com.zhida.service.ChatService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ZhidaApplicationTests {
 	@Autowired
 	private ChatProperties chatProperties;
+	@Autowired
+	private ChatService chatService;
 
 	@Test
 	void contextLoads() {
@@ -25,6 +28,14 @@ class ZhidaApplicationTests {
 	@Test
 	void providerNamesLoadAsUtf8() {
 		assertEquals("DeepSeek（深度求索）", chatProperties.getProviders().get("deepseek").getName());
+		assertEquals("GLM（智谱清言）", chatProperties.getProviders().get("glm").getName());
+		assertEquals("deepseek", chatProperties.getDefaultProvider());
+		assertEquals("glm-4-flash", chatProperties.getProviders().get("glm").getModel());
+	}
+
+	@Test
+	void deepSeekIsTheDefaultProvider() {
+		assertEquals("deepseek", chatService.providers().get(0).id());
 	}
 
 	@Test

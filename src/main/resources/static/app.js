@@ -7,9 +7,12 @@ const state = {
   searchQuery: ""
 };
 
+const MAX_HISTORY_MESSAGES = 100;
+
 const providerLabels = {
-  openai: "OpenAI（开放人工智能）",
   deepseek: "DeepSeek（深度求索）",
+  glm: "GLM（智谱清言）",
+  openai: "OpenAI（开放人工智能）",
   qwen: "Qwen（通义千问）"
 };
 
@@ -59,7 +62,14 @@ function activeConversation() {
 }
 
 function newConversation() {
-  const conversation = { id: crypto.randomUUID(), title: "新建对话", messages: [], provider: "", model: "" };
+  const defaultProvider = state.providers[0];
+  const conversation = {
+    id: crypto.randomUUID(),
+    title: "新建对话",
+    messages: [],
+    provider: defaultProvider?.id || "",
+    model: defaultProvider?.model || ""
+  };
   state.conversations.unshift(conversation);
   state.activeId = conversation.id;
   resetMessageTools();
@@ -135,7 +145,7 @@ function renderMessages(conversation) {
   if (!conversation.messages.length) {
     const welcome = document.createElement("div");
     welcome.className = "empty-state";
-    welcome.innerHTML = "<h2>开始一个问题</h2><p>选择已配置的服务商与模型，然后输入问题。模型密钥仅保存在服务端环境变量中。</p>";
+    welcome.innerHTML = "<h2>开始一个问题</h2><p>选择已配置的服务商与模型，然后输入问题。模型密钥仅由服务端读取。</p>";
     elements.messages.append(welcome);
     return;
   }
@@ -332,7 +342,7 @@ function syncControls(conversation) {
   }
   const configured = provider && provider.configured;
   elements.send.disabled = !configured || state.sending;
-  elements.notice.textContent = configured ? "" : "请选择已配置 API 密钥的服务商。请在启动服务的终端中设置相应的 API_KEY。";
+  elements.notice.textContent = configured ? "" : "请先在 config/model-config.properties 中填写该服务商的 API_KEY，然后重新启动项目。";
 }
 
 async function loadProviders() {
@@ -376,7 +386,9 @@ elements.form.addEventListener("submit", async (event) => {
   const provider = selectedProvider();
   if (!content || !provider || !provider.configured) return;
 
-  const history = conversation.messages.slice(-30).map(({ role, content: previousContent }) => ({ role, content: previousContent }));
+  const history = conversation.messages
+    .slice(-MAX_HISTORY_MESSAGES)
+    .map(({ role, content: previousContent }) => ({ role, content: previousContent }));
   const userMessage = { id: crypto.randomUUID(), role: "user", content };
   conversation.messages.push(userMessage);
   if (conversation.title === "新建对话") conversation.title = content.slice(0, 28);

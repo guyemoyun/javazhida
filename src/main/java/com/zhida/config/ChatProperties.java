@@ -7,7 +7,16 @@ import java.util.Map;
 
 @ConfigurationProperties(prefix = "chat")
 public class ChatProperties {
+    private String defaultProvider = "deepseek";
     private Map<String, Provider> providers = new LinkedHashMap<>();
+
+    public String getDefaultProvider() {
+        return defaultProvider;
+    }
+
+    public void setDefaultProvider(String defaultProvider) {
+        this.defaultProvider = defaultProvider;
+    }
 
     public Map<String, Provider> getProviders() {
         return providers;
