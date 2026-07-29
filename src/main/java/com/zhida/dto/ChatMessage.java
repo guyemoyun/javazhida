@@ -6,6 +6,6 @@ import jakarta.validation.constraints.Size;
 
 public record ChatMessage(
         @Pattern(regexp = "user|assistant", message = "消息角色不合法") String role,
-        @NotBlank(message = "历史消息不能为空") @Size(max = 12000, message = "历史消息不能超过 12000 个字符") String content
+        @NotBlank(message = "历史消息不能为空") @Size(max = 200000, message = "历史消息不能超过 200000 个字符") String content
 ) {
 }

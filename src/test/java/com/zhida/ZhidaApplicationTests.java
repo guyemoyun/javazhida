@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
+@SpringBootTest(properties = "zhida.data-dir=target/test-data/application")
 class ZhidaApplicationTests {
 	@Autowired
 	private ChatProperties chatProperties;
@@ -50,7 +50,11 @@ class ZhidaApplicationTests {
 		assertTrue(script.contains("function saveEditedMessage"));
 		assertTrue(script.contains("function deleteMessage"));
 		assertTrue(script.contains("function normalizeConversations"));
+		assertTrue(script.contains("/api/conversations"));
+		assertTrue(script.contains("/api/chat/stream"));
+		assertTrue(script.contains("function exportData"));
 		assertTrue(styles.contains(".message-editor"));
+		assertTrue(styles.contains(".code-copy"));
 	}
 
 	private String readClasspathResource(String path) throws IOException {

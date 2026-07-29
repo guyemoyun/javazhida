@@ -127,6 +127,7 @@ $applicationLog = Join-Path $logDirectory 'zhida.log'
 $javaArguments = @(
     '-jar',
     ('"{0}"' -f $jar.FullName),
+    '--server.address=127.0.0.1',
     "--server.port=$Port",
     ('--logging.file.name="{0}"' -f $applicationLog)
 )

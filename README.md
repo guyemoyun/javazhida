@@ -1,8 +1,16 @@
 # 智答多模型问答
 
-智答是一个本地运行的 Spring Boot 网页问答项目。前端页面、后端 API 和模型请求代理位于同一个应用中，启动一个 Java 进程即可使用。
+智答是一个本地运行、本地保存数据的 Spring Boot 网页问答项目。前端页面、后端接口、SQLite 会话库和模型请求代理位于同一个应用中，启动一个 Java 进程即可使用。
 
-项目默认选择 **DeepSeek / `deepseek-chat`**，同时支持 GLM、OpenAI 和通义千问 Qwen。这些服务商都通过 OpenAI 兼容的非流式 `/chat/completions` 协议调用。
+项目默认选择 **DeepSeek / `deepseek-chat`**，同时支持 GLM、OpenAI 和通义千问 Qwen。这些服务商都通过 OpenAI 兼容的流式 `/chat/completions` 协议调用。
+
+主要能力：
+
+- 流式显示回答，可随时停止、重试或重新生成。
+- Markdown、安全链接和代码语法高亮，支持一键复制代码。
+- 对话与消息保存在本机 SQLite，可导入、导出 JSON 备份。
+- 首次升级会把当前浏览器中的旧版 `localStorage` 对话自动迁移到 SQLite。
+- 应用强制监听 `127.0.0.1`，不会向局域网开放模型代理。
 
 ## 环境要求
 
@@ -91,9 +99,11 @@ logs/zhida.log
 1. 打开 `http://127.0.0.1:8080`。
 2. 新对话默认选择 DeepSeek，也可在右上角切换 GLM、OpenAI 或 Qwen。
 3. 确认模型名称，输入问题后按 Enter 发送，Shift+Enter 换行。
-4. 消息和对话记录保存在当前浏览器的 `localStorage` 中。
+4. 消息和对话记录保存在项目 `data/zhida.db` 中；侧栏可导入或导出 JSON 备份。
 
-每次提问会携带最近 `100` 条历史消息，再加上当前问题发送给模型。超过该数量的更早消息仍保留在浏览器对话记录中，但不再作为当次模型上下文。
+每次提问会携带最近 `100` 条历史消息，再加上当前问题发送给模型。超过该数量的更早消息仍保留在本地对话记录中，但不再作为当次模型上下文。
+
+> “本地保存”不代表“本地推理”。使用 DeepSeek、OpenAI、GLM 或 Qwen 时，发送的消息仍会传给相应云服务。数据库、备份和项目配置保留在本机。
 
 服务商显示“未配置”时，检查 `config/model-config.properties` 中对应的 `API_KEY`，然后重新执行 `.\start.ps1`。
 
@@ -101,15 +111,18 @@ logs/zhida.log
 
 ```text
 浏览器页面
-  -> POST /api/chat
+  -> POST /api/chat/stream
   -> ChatController 校验请求
   -> ChatService 根据 provider 读取服务端配置
-  -> 请求 {base-url}/chat/completions
-  -> 统一 Result 结构返回前端
+  -> 流式请求 {base-url}/chat/completions
+  -> 以 SSE 增量事件返回前端
 ```
 
 - `GET /api/providers`：返回可用服务商、默认模型和是否已配置密钥。DeepSeek 始终排在第一位。
-- `POST /api/chat`：接收服务商、模型、当前问题和最近的对话历史。
+- `POST /api/chat/stream`：流式聊天接口，返回 `meta`、`delta`、`usage`、`done` 或 `error` 事件。
+- `POST /api/chat`：保留的非流式兼容接口。
+- `GET /api/conversations`：读取本机 SQLite 会话快照。
+- `PUT /api/conversations`：以单事务保存版本化会话快照。
 - 密钥不在 `/api/providers` 或聊天响应中暴露。
 
 ## 测试与手动启动
@@ -148,7 +161,7 @@ CUSTOM_API_KEY=你的_API_Key
 CUSTOM_MODEL=custom-model
 ```
 
-新服务必须兼容 OpenAI 的非流式 `/chat/completions` 请求和响应结构，否则需要在后端增加单独的协议适配器。
+新服务必须兼容 OpenAI 的 `/chat/completions` 请求和 SSE 流式响应结构，否则需要在后端增加单独的协议适配器。
 
 ## 常见问题
 

@@ -6,6 +6,7 @@
   <meta name="description" content="智答多模型问答应用">
   <title>智答 - 多模型问答</title>
   <link rel="stylesheet" href="/app.css">
+  <link rel="stylesheet" href="/webjars/highlightjs/11.11.1/styles/github-dark.min.css">
 </head>
 <body>
   <main class="app-shell">
@@ -18,7 +19,12 @@
       <button class="new-chat" id="new-chat" type="button"><span>+</span>新建对话</button>
       <div class="history-heading"><span>对话记录</span><span id="conversation-count">0</span></div>
       <nav class="conversation-list" id="conversation-list" aria-label="历史对话"></nav>
-      <div class="sidebar-footer"><span class="status-dot"></span><span>记录保存在当前浏览器</span></div>
+      <div class="data-tools" aria-label="本地数据工具">
+        <button id="import-data" type="button" title="导入本地数据"><span aria-hidden="true">⇧</span>导入</button>
+        <button id="export-data" type="button" title="导出本地数据"><span aria-hidden="true">⇩</span>导出</button>
+        <input id="import-file" type="file" accept="application/json,.json" hidden>
+      </div>
+      <div class="sidebar-footer"><span class="status-dot"></span><span>对话保存在本机 SQLite</span></div>
     </aside>
 
     <section class="chat-panel" aria-label="问答">
@@ -51,11 +57,17 @@
         <textarea id="question" rows="3" maxlength="12000" aria-label="输入问题" placeholder="输入消息..." required></textarea>
         <div class="composer-footer">
           <span id="composer-status">Enter 发送，Shift + Enter 换行</span>
-          <button id="send" type="submit">发送</button>
+          <div class="composer-actions">
+            <button id="stop" type="button" title="停止生成" aria-label="停止生成" hidden><span aria-hidden="true">■</span> 停止</button>
+            <button id="send" type="submit">发送</button>
+          </div>
         </div>
       </form>
     </section>
   </main>
+  <script src="/webjars/marked/18.0.7/lib/marked.umd.js"></script>
+  <script src="/webjars/dompurify/3.4.12/dist/purify.min.js"></script>
+  <script src="/webjars/highlightjs/11.11.1/highlight.min.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

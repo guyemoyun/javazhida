@@ -1,9 +1,14 @@
-GET http://localhost:8080/api/providers
+GET http://127.0.0.1:8080/api/providers
 
 ###
 
-POST http://localhost:8080/api/chat
+GET http://127.0.0.1:8080/api/conversations
+
+###
+
+POST http://127.0.0.1:8080/api/chat/stream
 Content-Type: application/json
+Accept: text/event-stream
 
 {
   "provider": "deepseek",
